@@ -1,0 +1,42 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from ExameServiceService WSDL service -->
+
+  <service name="ExameService" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://wsns"/>
+      <parameter name="wsdlServiceElement" value="ExameServiceService"/>
+      <parameter name="schemaQualified" value="http://wsns"/>
+      <parameter name="wsdlServicePort" value="ExameService"/>
+      <parameter name="className" value="wsns.ExameServiceSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="ExameService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="deleteExames" qname="operNS:deleteExames" xmlns:operNS="http://wsns" returnQName="retNS:deleteExamesReturn" xmlns:retNS="http://wsns" returnType="rtns:int" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="pns:idsExames" xmlns:pns="http://wsns" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="mergeExames" qname="operNS:mergeExames" xmlns:operNS="http://wsns" returnQName="retNS:mergeExamesReturn" xmlns:retNS="http://wsns" returnType="rtns:int" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="pns:exames" xmlns:pns="http://wsns" type="tns:Exame" xmlns:tns="http://wsns"/>
+      </operation>
+      <operation name="getExames" qname="operNS:getExames" xmlns:operNS="http://wsns" returnQName="retNS:getExamesReturn" xmlns:retNS="http://wsns" returnType="rtns:Exame" xmlns:rtns="http://wsns" soapAction="" >
+      </operation>
+      <parameter name="allowedMethods" value="deleteExames getExames mergeExames"/>
+
+      <typeMapping
+        xmlns:ns="http://wsns"
+        qname="ns:Exame"
+        type="java:wsns.Exame"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

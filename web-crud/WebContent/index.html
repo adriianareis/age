@@ -1,0 +1,234 @@
+<html>
+	<head>	 
+		<meta charset="utf-8">   
+		<style type="text/css">
+			table {
+			    width: 100%;
+			    border-collapse: collapse;
+			}
+			tr {
+				border: 1px solid black;
+			}
+			th, td {
+				padding: 4px;
+			}
+		</style>
+	    <script type="text/javascript">
+
+	    	// busca os registro no webserice e preenche a tabela na tela
+	    	function select() {
+	            var xmlhttp = new XMLHttpRequest();
+	            xmlhttp.open('POST', 'http://localhost:8080/web-service/services/ExameService', true);
+	            var xml = `
+	            	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsns="http://wsns">
+					   <soapenv:Header/>
+					   <soapenv:Body>
+					      <wsns:getExames/>
+					   </soapenv:Body>
+					</soapenv:Envelope>
+	            `;
+	            xmlhttp.setRequestHeader('Content-Type', 'text/xml;charset=utf-8');
+	            xmlhttp.setRequestHeader('SOAPAction', '');
+	            xmlhttp.onreadystatechange = function () {
+	                if (xmlhttp.readyState == 4) {
+	                    var xml = new DOMParser().parseFromString(xmlhttp.responseText, 'text/xml');
+	                    var exames = Object.values(xml.querySelectorAll("getExamesReturn")).map(e => {	
+	                    	return {
+	                    		id: parseInt(e.querySelectorAll("id")[0].innerHTML),
+	                    		data: new Date(e.querySelectorAll("data")[0].innerHTML),
+	                    		medico: e.querySelectorAll("medico")[0].innerHTML,
+	                    		paciente: e.querySelectorAll("paciente")[0].innerHTML,
+	                    		tipo: e.querySelectorAll("tipo")[0].innerHTML,
+	                    		endereco: e.querySelectorAll("endereco")[0].innerHTML
+	                    	};
+	                    });
+	                    var trs = exames.map(exame => `
+                    		<tr>
+                    			<td>${exame.id}</td>
+                    			<td>${exame.data}</td>
+                    			<td>${exame.medico}</td>
+                    			<td>${exame.paciente}</td>
+                    			<td>${exame.tipo}</td>
+                    			<td>${exame.endereco}</td>
+                    			<td><button type="button" onclick="edit(${exame.id}, ${exame.data.getTime()}, '${exame.medico}', '${exame.paciente}', '${exame.tipo}', '${exame.endereco}')">editar</button></td>
+                    			<td><button type="button" onclick="remove(${exame.id})">remover</button></td>
+                    		</tr>
+                    	`);
+                    	document.querySelectorAll("table#exames > tbody")[0].innerHTML = trs.join("");
+	                }
+	            };
+	            xmlhttp.send(xml);
+	        };
+
+	        function formatDate1(d) {
+	        	return `${("0000" +d.getFullYear()).slice(-4)}-${("00" + (d.getMonth()+1)).slice(-2)}-${("00" + d.getDate()).slice(-2)}T${("00" + d.getHours()).slice(-2)}:${("00" + d.getMinutes()).slice(-2)}`; 
+	        }
+
+	        function formatDate2(d) {
+	        	return `${("0000" +d.getFullYear()).slice(-4)}-${("00" + (d.getMonth()+1)).slice(-2)}-${("00" + d.getDate()).slice(-2)}T${("00" + d.getHours()).slice(-2)}:${("00" + d.getMinutes()).slice(-2)}:${("00" + d.getSeconds()).slice(-2)}`
+	        }
+
+	        function edit(id, data, medico, paciente, tipo, endereco) {
+	        	var d = new Date(data);
+	        	var f = formatDate1(d);
+	        	document.getElementById("id").value = id;
+	        	document.getElementById("data").value = f;
+	        	document.getElementById("medico").value = medico;
+	        	document.getElementById("paciente").value = paciente;
+	        	document.getElementById("tipo").value = tipo;
+	        	document.getElementById("endereco").value = endereco;
+	        }
+
+	        // salva m registro (insere ou atualiza)
+	        function save() {
+	        	var exame = {
+	        		id: parseInt(document.getElementById("id").value),
+	        		data: new Date(document.getElementById("data").value),
+	        		medico: document.getElementById("medico").value,
+	        		paciente: document.getElementById("paciente").value,
+	        		tipo: document.getElementById("tipo").value,
+	        		endereco: document.getElementById("endereco").value
+	        	};
+	        	var xmlhttp = new XMLHttpRequest();
+	            xmlhttp.open('POST', 'http://localhost:8080/web-service/services/ExameService', true);
+	            var xml = `
+	            	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsns="http://wsns">
+					   <soapenv:Header/>
+					   <soapenv:Body>
+					       <wsns:mergeExames>
+					         <wsns:exames>
+					            <wsns:data>${formatDate2(exame.data)}</wsns:data>
+					            <wsns:endereco>${exame.endereco}</wsns:endereco>
+					            <wsns:id>${exame.id}</wsns:id>
+					            <wsns:medico>${exame.medico}</wsns:medico>
+					            <wsns:paciente>${exame.paciente}</wsns:paciente>
+					            <wsns:tipo>${exame.tipo}</wsns:tipo>
+					         </wsns:exames>
+      						</wsns:mergeExames>
+					   </soapenv:Body>
+					</soapenv:Envelope>
+	            `;
+	            xmlhttp.setRequestHeader('Content-Type', 'text/xml;charset=utf-8');
+	            xmlhttp.setRequestHeader('SOAPAction', '');
+	            xmlhttp.onreadystatechange = function () {
+	                if (xmlhttp.readyState == 4) {
+	                    var xml = new DOMParser().parseFromString(xmlhttp.responseText, 'text/xml');
+	                    var number = parseInt(xml.querySelectorAll("mergeExamesReturn")[0].innerHTML);
+	                    if (number === 1) {
+	                    	alert("registro salvo com sucesso!");
+	                    } else {
+	                    	alert("falha ao salvar registro!");
+	                    }	                    
+	                    select();
+	                }
+	            };
+	            xmlhttp.send(xml);
+	        }
+
+	        // remove um registro
+	        function remove(id) {
+	        	var xmlhttp = new XMLHttpRequest();
+	            xmlhttp.open('POST', 'http://localhost:8080/web-service/services/ExameService', true);
+	            var xml = `
+	            	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsns="http://wsns">
+					   <soapenv:Header/>
+					   <soapenv:Body>
+					       <wsns:deleteExames>
+					         <wsns:idsExames>${id}</wsns:idsExames>
+					       </wsns:deleteExames>
+					   </soapenv:Body>
+					</soapenv:Envelope>
+	            `;
+	            xmlhttp.setRequestHeader('Content-Type', 'text/xml;charset=utf-8');
+	            xmlhttp.setRequestHeader('SOAPAction', '');
+	            xmlhttp.onreadystatechange = function () {
+	                if (xmlhttp.readyState == 4) {
+	                    var xml = new DOMParser().parseFromString(xmlhttp.responseText, 'text/xml');
+	                    var number = parseInt(xml.querySelectorAll("deleteExamesReturn")[0].innerHTML);
+	                    if (number === 1) {
+	                    	alert("registro removido com sucesso!");
+	                    } else {
+	                    	alert("falha ao remover registro!");
+	                    }	                    
+	                    select();
+	                }
+	            };
+	            xmlhttp.send(xml);	
+	        }
+
+	        function limpar() {
+        		document.getElementById("id").value = "";
+        		document.getElementById("data").value = "";
+        		document.getElementById("medico").value = "";
+        		document.getElementById("paciente").value = "";
+        		document.getElementById("tipo").value = "";
+        		document.getElementById("endereco").value = "";
+	        }
+
+	        // executa apenas uma vez -> quando a página carrega
+	        document.addEventListener("DOMContentLoaded", function() {
+	        	select();
+	        });
+
+	    </script>
+	</head>
+	<body>
+		<table id="exames">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>DATA</th>
+					<th>MÉDICO</th>
+					<th>PACIENTE</th>
+					<th>TIPO</th>
+					<th>ENDEREÇO</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+
+		<form>
+
+			<br>
+			
+			<label>id</label>
+			<input type="text" id="id" readonly />
+			<br>
+			<br>
+
+			<label>data</label>
+			<input type="datetime-local" id="data" />
+			<br>
+			<br>
+
+			<label>medico</label>
+			<input type="text" id="medico" />
+			<br>
+			<br>
+
+			<label>paciente</label>
+			<input type="text" id="paciente" />
+			<br>
+			<br>
+
+			<label>tipo</label>
+			<input type="text" id="tipo" />
+			<br>
+			<br>
+
+			<label>endereco</label>
+			<input type="text" id="endereco" />
+			<br>
+			<br>
+
+			<button type="button" onclick="save()">salvar</button>
+			<button type="button" onclick="limpar()">limpar</button>
+
+		</form>
+
+	</body>
+</html>

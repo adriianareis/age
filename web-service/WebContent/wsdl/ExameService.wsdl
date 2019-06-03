@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://wsns" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://wsns" xmlns:intf="http://wsns" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://wsns" xmlns="http://www.w3.org/2001/XMLSchema">
+   <element name="deleteExames">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="idsExames" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="deleteExamesResponse">
+    <complexType>
+     <sequence>
+      <element name="deleteExamesReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="mergeExames">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="exames" type="impl:Exame"/>
+     </sequence>
+    </complexType>
+   </element>
+   <complexType name="Exame">
+    <sequence>
+     <element name="data" nillable="true" type="xsd:dateTime"/>
+     <element name="endereco" nillable="true" type="xsd:string"/>
+     <element name="id" type="xsd:int"/>
+     <element name="medico" nillable="true" type="xsd:string"/>
+     <element name="paciente" nillable="true" type="xsd:string"/>
+     <element name="tipo" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="mergeExamesResponse">
+    <complexType>
+     <sequence>
+      <element name="mergeExamesReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getExames">
+    <complexType/>
+   </element>
+   <element name="getExamesResponse">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="getExamesReturn" type="impl:Exame"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="deleteExamesRequest">
+
+      <wsdl:part element="impl:deleteExames" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="mergeExamesRequest">
+
+      <wsdl:part element="impl:mergeExames" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="getExamesResponse">
+
+      <wsdl:part element="impl:getExamesResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="getExamesRequest">
+
+      <wsdl:part element="impl:getExames" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteExamesResponse">
+
+      <wsdl:part element="impl:deleteExamesResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="mergeExamesResponse">
+
+      <wsdl:part element="impl:mergeExamesResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:portType name="ExameService">
+
+      <wsdl:operation name="deleteExames">
+
+         <wsdl:input message="impl:deleteExamesRequest" name="deleteExamesRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:deleteExamesResponse" name="deleteExamesResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="mergeExames">
+
+         <wsdl:input message="impl:mergeExamesRequest" name="mergeExamesRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:mergeExamesResponse" name="mergeExamesResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getExames">
+
+         <wsdl:input message="impl:getExamesRequest" name="getExamesRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:getExamesResponse" name="getExamesResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="ExameServiceSoapBinding" type="impl:ExameService">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="deleteExames">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="deleteExamesRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="deleteExamesResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="mergeExames">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="mergeExamesRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="mergeExamesResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getExames">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getExamesRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getExamesResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="ExameServiceService">
+
+      <wsdl:port binding="impl:ExameServiceSoapBinding" name="ExameService">
+
+         <wsdlsoap:address location="http://localhost:8080/web-service/services/ExameService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
