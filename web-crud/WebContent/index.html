@@ -113,6 +113,7 @@
 	            xmlhttp.onreadystatechange = function () {
 	                if (xmlhttp.readyState == 4) {
 	                    var xml = new DOMParser().parseFromString(xmlhttp.responseText, 'text/xml');
+	                    console.log(xml);
 	                    var number = parseInt(xml.querySelectorAll("mergeExamesReturn")[0].innerHTML);
 	                    if (number === 1) {
 	                    	alert("registro salvo com sucesso!");
@@ -156,8 +157,8 @@
 	            xmlhttp.send(xml);	
 	        }
 
-	        function limpar() {
-        		document.getElementById("id").value = "";
+	        function limpar() {;
+        		document.getElementById("id").value = "0";
         		document.getElementById("data").value = "";
         		document.getElementById("medico").value = "";
         		document.getElementById("paciente").value = "";
@@ -196,7 +197,7 @@
 			<br>
 			
 			<label>id</label>
-			<input type="text" id="id" readonly />
+			<input type="text" id="id" readonly value="0" />
 			<br>
 			<br>
 
